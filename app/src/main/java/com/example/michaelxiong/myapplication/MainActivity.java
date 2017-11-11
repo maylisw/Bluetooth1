@@ -6,25 +6,29 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
     public final static int REQUEST_ENABLE_BT = 1;
-    public final static int DISCOVERABILITY_TIME = 300;
+    public final static int REQUEST_ENABLE_DIS = 100;
+
+    private TextView codeDisplay;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        codeDisplay = (TextView) findViewById(R.id.code_display);
     }
 
     public void onStartClick(View view){
         setUpBT();
         Intent discoverableIntent =
                 new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
-        discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, DISCOVERABILITY_TIME);
-        startActivity(discoverableIntent);
+        discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, REQUEST_ENABLE_DIS);
+        startActivityForResult(discoverableIntent, REQUEST_ENABLE_DIS);
     }
 
     public void onFindClick(View view){
@@ -54,8 +58,14 @@ public class MainActivity extends AppCompatActivity {
             Log.d("Working:", "Bluetooth enabled");
             Toast.makeText(this, "Bluetooth enabled", Toast.LENGTH_SHORT).show();
         }
-        else if(resultCode == DISCOVERABILITY_TIME){
-
+        else if(resultCode == REQUEST_ENABLE_DIS){
+            Log.d("Working", "Made discoverable");
+            Toast.makeText(this, "Made discoverable", Toast.LENGTH_SHORT).show();
+            String code = "";
+            for(int i = 0; i < 8; i++){
+                code = code + (int) (10*Math.random());
+            }
+            codeDisplay.setText(code);
         }
     }
 }
