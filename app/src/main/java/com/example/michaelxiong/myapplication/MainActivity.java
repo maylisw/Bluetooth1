@@ -1,6 +1,8 @@
 package com.example.michaelxiong.myapplication;
 
 import android.bluetooth.BluetoothAdapter;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -12,15 +14,22 @@ import android.widget.Toast;
 public class MainActivity extends AppCompatActivity {
 
     public final static int REQUEST_ENABLE_BT = 1;
-    public final static int REQUEST_ENABLE_DIS = 100;
+    public final static int REQUEST_ENABLE_DIS = 300;
 
     private TextView codeDisplay;
+    private BroadcastReceiver broadcastReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         codeDisplay = (TextView) findViewById(R.id.code_display);
+        broadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if(intent == ACTION_SCAN_MODE_CHANGED){}
+            }
+        };
     }
 
     public void onStartClick(View view){
