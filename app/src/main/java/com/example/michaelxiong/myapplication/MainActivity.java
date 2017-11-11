@@ -5,16 +5,29 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
     public final static int REQUEST_ENABLE_BT = 1;
+    public final static int DISCOVERABILITY_TIME = 300;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+    }
+
+    public void onStartClick(View view){
+        setUpBT();
+        Intent discoverableIntent =
+                new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
+        discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, DISCOVERABILITY_TIME);
+        startActivity(discoverableIntent);
+    }
+
+    public void onFindClick(View view){
         setUpBT();
     }
 
@@ -37,7 +50,12 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Log.d("Working:", "Bluetooth enabled");
-        Toast.makeText(this, "Bluetooth enabled", Toast.LENGTH_SHORT).show();
+        if(requestCode == REQUEST_ENABLE_BT){
+            Log.d("Working:", "Bluetooth enabled");
+            Toast.makeText(this, "Bluetooth enabled", Toast.LENGTH_SHORT).show();
+        }
+        else if(resultCode == DISCOVERABILITY_TIME){
+
+        }
     }
 }
