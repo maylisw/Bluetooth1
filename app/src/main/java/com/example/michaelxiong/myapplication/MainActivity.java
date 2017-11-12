@@ -1,6 +1,7 @@
 package com.example.michaelxiong.myapplication;
 
 import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -77,4 +78,11 @@ public class MainActivity extends AppCompatActivity {
             codeDisplay.setText(code);
         }
     }
+
+
+
+
+
+    BluetoothSocket bluetoothSocket = new BluetoothSocket();
+    BluetoothDevice.Create
 }
