@@ -12,7 +12,7 @@ import java.io.IOException;
 
 public final class BluetoothServerSocket extends Object implements Closeable{
 
-    private BluetoothSocket = new BluetoothSocket();
+//    private BluetoothSocket = new BluetoothSocket();
 
 
     @Override

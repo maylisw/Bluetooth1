@@ -18,29 +18,34 @@ import android.widget.Toast;
 public class MainActivity extends AppCompatActivity {
 
     public final static int REQUEST_ENABLE_BT = 1;
-    public final static int REQUEST_ENABLE_DIS = 10;
+    public final static int REQUEST_ENABLE_DIS = 300;
 
     private TextView codeDisplay;
     private IntentFilter filter;
     private BroadcastReceiver broadcastReceiver;
+    private BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+
+    private boolean discoverable;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         codeDisplay = (TextView) findViewById(R.id.code_display);
-        filter = new IntentFilter("ACTION_SCAN_MODE_CHANGED");
+        filter = new IntentFilter(BluetoothAdapter.ACTION_SCAN_MODE_CHANGED);
+        String bob = BluetoothAdapter.EXTRA_PREVIOUS_SCAN_MODE;
 //        filter.addAction("ENABLE_DIS");
 //        filter.addCategory(Intent.CATEGORY_DEFAULT);
         broadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 Log.d("Working", "Broadcast received");
-
-                if(intent.getAction().equals("ACTION_SCAN_MODE_CHANGED")){
-                    if(intent.getStringExtra("EXTRA_PREVIOUS_SCAN_MODE").equals("SCAN_MODE_CONNECTABLE_DISCOVERABLE")) {
+                if(intent.getAction().equals(BluetoothAdapter.ACTION_SCAN_MODE_CHANGED)){
+                    if(discoverable) {
                         Log.d("Working", "Connection session ended");
                         codeDisplay.setText("Your session to connect has timed out");
+                        discoverable = false;
                     }
                     else{
                         Log.d("Working", "Connection session started");
@@ -58,10 +63,12 @@ public class MainActivity extends AppCompatActivity {
 
     public void onStartClick(View view){
         setUpBT();
-        Intent discoverableIntent =
-                new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
-        discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, REQUEST_ENABLE_DIS);
-        startActivityForResult(discoverableIntent, REQUEST_ENABLE_DIS);
+        if(!(mBluetoothAdapter.getScanMode() == BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE )) {
+            Intent discoverableIntent =
+                    new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
+            discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, REQUEST_ENABLE_DIS);
+            startActivityForResult(discoverableIntent, REQUEST_ENABLE_DIS);
+        }
     }
 
     public void onFindClick(View view){
@@ -99,10 +106,14 @@ public class MainActivity extends AppCompatActivity {
                 code = code + (int) (10*Math.random());
             }
             codeDisplay.setText(code);
+            discoverable = true;
 //            Intent i = new Intent("ENABLE_DIS");
 //            i.addCategory(Intent.CATEGORY_DEFAULT);
 //            sendBroadcast(i);
 //            Log.d("Working", "Broadcast sent");
+        }
+        else if(resultCode == RESULT_CANCELED){
+            Toast.makeText(this, "Discoverability rejected", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -117,8 +128,8 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-
-
-    BluetoothSocket bluetoothSocket = new BluetoothSocket();
-    BluetoothDevice.Create
+//
+//
+//    BluetoothSocket bluetoothSocket = new BluetoothSocket();
+//    BluetoothDevice.Create();
 }
