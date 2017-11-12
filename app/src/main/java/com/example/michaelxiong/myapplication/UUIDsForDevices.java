@@ -14,7 +14,7 @@ import java.util.ArrayList;
  */
 
 public class UUIDsForDevices {
-
+    //This should be moved into the main class later
     ArrayList<BluetoothDevice> mDeviceList = new ArrayList<BluetoothDevice>();
 
     private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
