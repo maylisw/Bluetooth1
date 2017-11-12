@@ -4,6 +4,9 @@ import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -14,9 +17,10 @@ import android.widget.Toast;
 public class MainActivity extends AppCompatActivity {
 
     public final static int REQUEST_ENABLE_BT = 1;
-    public final static int REQUEST_ENABLE_DIS = 300;
+    public final static int REQUEST_ENABLE_DIS = 10;
 
     private TextView codeDisplay;
+    private IntentFilter filter;
     private BroadcastReceiver broadcastReceiver;
 
     @Override
@@ -24,13 +28,32 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         codeDisplay = (TextView) findViewById(R.id.code_display);
+        filter = new IntentFilter("ACTION_SCAN_MODE_CHANGED");
+//        filter.addAction("ENABLE_DIS");
+//        filter.addCategory(Intent.CATEGORY_DEFAULT);
         broadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                if(intent == ACTION_SCAN_MODE_CHANGED){}
+                Log.d("Working", "Broadcast received");
+
+                if(intent.getAction().equals("ACTION_SCAN_MODE_CHANGED")){
+                    if(intent.getStringExtra("EXTRA_PREVIOUS_SCAN_MODE").equals("SCAN_MODE_CONNECTABLE_DISCOVERABLE")) {
+                        Log.d("Working", "Connection session ended");
+                        codeDisplay.setText("Your session to connect has timed out");
+                    }
+                    else{
+                        Log.d("Working", "Connection session started");
+                    }
+                }
+//                else if(intent.getAction().equals("ENABLE_DIS")){
+//                    Toast.makeText(context, "broadcast received", Toast.LENGTH_SHORT).show();
+//                }
             }
         };
+        registerReceiver(broadcastReceiver, filter);
+
     }
+
 
     public void onStartClick(View view){
         setUpBT();
@@ -75,6 +98,19 @@ public class MainActivity extends AppCompatActivity {
                 code = code + (int) (10*Math.random());
             }
             codeDisplay.setText(code);
+//            Intent i = new Intent("ENABLE_DIS");
+//            i.addCategory(Intent.CATEGORY_DEFAULT);
+//            sendBroadcast(i);
+//            Log.d("Working", "Broadcast sent");
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (broadcastReceiver != null) {
+            unregisterReceiver(broadcastReceiver);
+            broadcastReceiver = null;
+        }
+        super.onDestroy();
     }
 }
